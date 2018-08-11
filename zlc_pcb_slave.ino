@@ -24,8 +24,10 @@
 
 ros::NodeHandle nh;
 
-rosserial_arduino::Adc adc_msg;
-ros::Publisher p("adc_zlc", &adc_msg);
+std_msgs::UInt16 adc_z;
+std_msgs::UInt16 adc_lc;
+ros::Publisher pz("adc_z", &adc_z);
+ros::Publisher plc("adc_lc", &adc_lc);
 
 // the ADC communicates using SPI, so include the library:
 #include <SPI.h>
@@ -91,9 +93,10 @@ void loop() {
     tot_lc += arr_lc_force[i]/10;
     tot_z += arr_z_force[i]/10;
   }
-  adc_msg.adc0 = tot_lc*2;
-  adc_msg.adc1 = tot_z*2;
-  p.publish(&adc_msg);
+  adc_z.data = tot_z*2;
+  adc_lc.data = tot_lc*2;
+  pz.publish(&adc_z);
+  plc.publish(&adc_lc);
   tot_lc = 0;
   tot_z  = 0;
   nh.spinOnce();
